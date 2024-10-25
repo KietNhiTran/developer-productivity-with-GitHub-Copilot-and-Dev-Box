@@ -12,6 +12,12 @@ on:
     paths:
       - 'src/Application/**'
 
+env:
+  registryName: d63bpskoxfigimpnpreg.azurecr.io
+  repositoryName: techexcel/dotnetcoreapp
+  dockerFolderPath: ./src/Application/src/RazorPagesTestSample
+  tag: ${{ github.sha }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,22 +40,22 @@ jobs:
     - name: Run tests
       run: dotnet test ./src/Application/tests/RazorPagesTestSample.Tests/RazorPagesTestSample.Tests.csproj --no-build --verbosity normal
 
-#   build-docker:
-#     runs-on: ubuntu-latest
+  build-docker:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-#     - name: Build Docker image
-#       run: docker build -t razorpages-testsample:latest ./src/Application/src/RazorPagesTestSample
+    - name: Build Docker image
+      run: docker build -t ${{ env.registryName }}/${{ env.repositoryName }}:${{ env.tag }} ${{ env.dockerFolderPath }}
 
-#     - name: Login to Azure Container Registry
-#       uses: azure/docker-login@v1
-#       with:
-#         login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-#         username: ${{ secrets.ACR_USERNAME }}
-#         password: ${{ secrets.ACR_PASSWORD }}
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
 
-#     - name: Push Docker image to Azure Container Registry
-#       run: docker push ${{ secrets.ACR_LOGIN_SERVER }}/razorpages-testsample:latest
+    - name: Push Docker image to Azure Container Registry
+      run: docker push ${{ env.registryName }}/${{ env.repositoryName }}:${{ env.tag }}
