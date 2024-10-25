@@ -59,3 +59,23 @@ jobs:
 
     - name: Push Docker image to Azure Container Registry
       run: docker push ${{ env.registryName }}/${{ env.repositoryName }}:${{ env.tag }}
+
+# create a new job to deploy webapp
+  deploy-to-dev:
+  
+    runs-on: ubuntu-latest
+    needs: dockerBuildPush
+    environment:
+      name: dev
+      url: https://d63bpskoxfigi-dev.azurewebsites.net/
+    
+    steps:
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v2.1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'd63bpskoxfigi-dev'
+          images: ${{ env.registryName }}/techexcel/dotnetcoreapp:${{ env.tag}}
