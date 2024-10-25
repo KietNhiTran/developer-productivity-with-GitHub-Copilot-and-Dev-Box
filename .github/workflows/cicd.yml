@@ -26,13 +26,13 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Restore dependencies
-      run: dotnet restore ./src/RazorPagesTestSample/RazorPagesTestSample.csproj
+      run: dotnet restore ./src/Application/src/RazorPagesTestSample/RazorPagesTestSample.csproj
 
     - name: Build application
-      run: dotnet build ./src/RazorPagesTestSample/RazorPagesTestSample.csproj --configuration Release --no-restore
+      run: dotnet build ./src/Application/src/RazorPagesTestSample/RazorPagesTestSample.csproj --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test ./src/RazorPagesTestSample/RazorPagesTestSample.csproj --no-build --verbosity normal
+      run: dotnet test ./src/Application/tests/RazorPagesTestSample.Tests/RazorPagesTestSample.Tests.csproj --no-build --verbosity normal
 
 #   build-docker:
 #     runs-on: ubuntu-latest
